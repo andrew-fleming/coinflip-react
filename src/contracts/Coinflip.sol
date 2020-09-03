@@ -63,8 +63,15 @@ contract Coinflip{
         return playerWinnings[msg.sender];
     }
     
+    //fund contract post-deployment
     function addFunds() public payable onlyOwner {
         contractBalance += msg.value;
     }
     
+    //fund user winnings balance 
+    //TESTING ONLY
+    function fundWinnings() public payable {
+        playerWinnings[msg.sender] += msg.value;
+    }
+
 }
