@@ -62,6 +62,24 @@ contract('Coinflip', (accounts) => {
             let newUserBal = await web3.eth.getBalance(accounts[0]);
             assert(oldUserBal < newUserBal, 'funds were not withdrawn properly');
         })
+        
+        it('should not allow a user to withdraw another users winnings', async () => {
+            await instance.fundWinnings({value: tokens('.5'), from: accounts[0]});
+            await instance.withdrawWinnings({from: accounts[1]}).should.be.rejected;
+        })
+    })
+
+    describe('onlyOwner functions', async () => {
+        it('should allow the owner to withdraw funds from contract', async () => {
+            await instance.addFunds({value: tokens('.5'), from: accounts[0]});
+            let ownerBalance = await web3.eth.getBalance(accounts[0]);
+            await instance.withdrawAll({from: accounts[0]});
+            let newOwnerBalance = await web3.eth.getBalance(accounts[0]);
+            assert(newOwnerBalance > ownerBalance, 'owner did not successfully retrieve contract funds');
+        })
+        it('should not allow a non owner to withdraw contract funds', async () => {
+            await instance.withdrawAll({from: accounts[1]}).should.be.rejected;
+        })
     })
 
 
