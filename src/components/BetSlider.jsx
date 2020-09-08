@@ -20,6 +20,7 @@ const Slider = styled.div`
     & .slider {
         width: 15rem;
     }
+    
 `;
 
 const DivAmount = styled.div`
