@@ -16,26 +16,13 @@ const SpanText = styled.span`
 const Slider = styled.div`
     margin-top: 1rem;
     display: flex;
-
-    & .slider {
-        width: 15rem;
     }
     
 `;
 
-const DivAmount = styled.div`
-    margin-top: 1rem;
-    display: flex;
-`;
 
 export default class BetSlider extends Component {
-    state = {
-        value: 5
-    }
-
-    handleOnChange = (event) => {
-        this.setState({value: event.target.value})
-    }
+    
 
     render() {
 
@@ -45,11 +32,9 @@ export default class BetSlider extends Component {
             <SlideContainer>
                 <SpanText>{betText}</SpanText>
                 <Slider>
-                    <input type="range" min={0} max={10} step=".001" value={this.state.value}
-                    className="slider" onChange={this.handleOnChange} />
+                
                 </Slider>
                 
-                <DivAmount className="value">{this.state.value} ETH</DivAmount>
             </SlideContainer>
         )
     }

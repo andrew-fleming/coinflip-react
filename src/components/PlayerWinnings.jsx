@@ -32,7 +32,7 @@ export default class PlayerWinnings extends Component {
                 <Div>
                 {winningsMessage}
                  <div>{this.props.winningsBalance}</div>
-                <Button>{withdrawMessage}</Button>
+                <Button onClick={this.props.userWithdrawal} >{withdrawMessage}</Button>
                 </Div>
             </Container>
         )

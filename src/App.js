@@ -44,11 +44,21 @@ const CoinDiv = styled.div`
   justify-content: center;
 `;
 
+const BetCol = styled.div`
+  display: flex;
+  flex-direction: column; 
+`;
+
+const Text = styled.div`
+  font-size: 2rem;
+  margin-top: 1rem;
+`;
+
 const accountBalanceText = 'Available ETH to win: ';
 
 export default class App extends Component {
 
-  async componentWillMount() {
+  async componentDidMount() {
     await this.loadWeb3()
     await this.loadBlockchainData()
   }
@@ -58,6 +68,7 @@ export default class App extends Component {
 
     const accounts = await web3.eth.getAccounts()
     this.setState({ account: accounts[0] })
+    console.log(accounts)
 
     const networkId = await web3.eth.net.getId()
 
@@ -66,25 +77,21 @@ export default class App extends Component {
       return web3.utils.fromWei(n);
     }
 
-    //contract funds data
+    //setting smart contract state
     const coinflipData = Coinflip.networks[networkId]
     if(coinflipData){
       const coinflip = new web3.eth.Contract(Coinflip.abi, coinflipData.address)
       this.setState({ coinflip })
+
+      //fetching the contract balance and setting the state
       let contractBalance = await coinflip.methods.contractBalance().call()
       this.setState({ contractBalance: tokens(contractBalance.toString()) })
-    } else {
-      window.alert('Coinflip contract not deployed to detected network.')
-    }
-
-    const userFundsData = Coinflip.networks[networkId]
-    if(userFundsData){
-      const coinflip = new web3.eth.Contract(Coinflip.abi, userFundsData.address)
-      this.setState({ coinflip })
+      
+      //load userWinnings balance
       let winningsBalance = await coinflip.methods.winningsBalance().call()
       this.setState({ winningsBalance: tokens(winningsBalance.toString()) })
     } else {
-      window.alert('User winnings not deployed on the network')
+      window.alert('Coinflip contract not deployed to detected network.')
     }
     this.setState({ loading: false })
   }
@@ -102,28 +109,55 @@ export default class App extends Component {
     }
   }
 
-  /*instantiateContract() {
-    const contract = require('truffle-contract')
-    const coinflip = contract(Coinflip)
-    let coinflipInstance
-    coinflip.setProvider(this.state.web3.currentProvider)
-
-    coinflip.deployed().then((instance) => {
-      coinflipInstance = instance
-      this.setState( {coinflip} )
-    })
-  }
-  */
-
   constructor(props) {
     super(props)
     this.state = {
       account: '0x0',
       contractBalance: '0',
       winningsBalance: '0',
-      //change loading once function to switch is up
+      betAmount: '.5',
       loading: true,
     }
+
+    this.flipTheCoin = this.flipTheCoin.bind(this)
+    this.userWithdrawal = this.userWithdrawal.bind(this)
+    this.inputHeads = this.inputHeads.bind(this)
+    this.inputTails = this.inputTails.bind(this)
+  }
+
+  flipTheCoin(guess){
+    this.setState({ loading: true })
+    var web3 = new Web3(Web3.givenProvider)
+    let bet = this.state.betAmount
+    let config = {
+      value: web3.utils.toWei(bet, 'ether'),
+      from: this.state.account
+    }
+    this.state.coinflip.methods.flip(guess).send(config)
+      .once('receipt', (receipt) => {
+      this.setState({ loading: false })
+    })
+  }
+
+  inputHeads(){
+    let guess = 0
+    
+    this.flipTheCoin(guess)
+  }
+
+  inputTails(){
+    let guess = 1
+
+    this.flipTheCoin(guess)
+  }
+
+  userWithdrawal(){
+    this.setState({ loading: true })
+    var balance = this.state.winningsBalance
+    this.state.coinflip.methods.withdrawWinnings().send(balance, { from: this.state.account })
+    .once('receipt', (receipt) => {
+      this.setState({ loading: false })
+    })
   }
 
   render() {
@@ -138,11 +172,26 @@ export default class App extends Component {
           <TriangleBefore/>
         </Triangle>
         <Div>
-          < BetSlider />
-          < PlayerWinnings winningsBalance={this.state.winningsBalance}/>
+          <BetCol>
+          < BetSlider 
+            />
+            <input type="text" placeholder="0-10"
+            ref={(value) => {this.value = value}}
+            >
+            </input>
+            <Text>Ether</Text>
+            </BetCol>
+          < PlayerWinnings 
+            winningsBalance={this.state.winningsBalance}
+            userWithdrawal={this.userWithdrawal}
+            />
         </Div>
         <CoinDiv>
-          < HeadsOrTails />
+          < HeadsOrTails 
+            flipTheCoin={this.flipTheCoin}
+            inputHeads={this.inputHeads}
+            inputTails={this.inputTails}
+            />
         </CoinDiv>
       </div>
     }

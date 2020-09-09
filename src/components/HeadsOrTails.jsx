@@ -33,10 +33,22 @@ const TailsButton = styled.button`
 export default class HeadsOrTails extends Component {
 
     render() {
+
         return (
             <Container>
-                <HeadsButton>Heads</HeadsButton>
-                <TailsButton>Tails</TailsButton>
+                <HeadsButton onClick={(event) => {
+                    event.preventDefault()
+                    
+                    this.props.inputHeads()
+                }}>Heads</HeadsButton>
+
+                <TailsButton
+                    onClick={(event) => {
+                        event.preventDefault()
+
+                        this.props.inputTails()
+                    }}
+                >Tails</TailsButton>
             </Container>
         )
     }
