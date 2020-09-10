@@ -1,27 +1,23 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
 
-const SlideContainer = styled.div`
+const Container = styled.div`
+    color: #a9a9a9;
+    text-shadow: 1.2px 1.2px #35281B;
 `;
 
 const SpanText = styled.span`
     font-size: 2rem;
     margin-top: 1rem;
+    margin-bottom: 1rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 `;
 
-const Slider = styled.div`
-    margin-top: 1rem;
-    display: flex;
-    }
-    
-`;
 
-
-export default class BetSlider extends Component {
+export default class BetForm extends Component {
     
 
     render() {
@@ -29,13 +25,10 @@ export default class BetSlider extends Component {
         const betText = "Place Your Bet"
 
         return (
-            <SlideContainer>
+            <Container>
                 <SpanText>{betText}</SpanText>
-                <Slider>
                 
-                </Slider>
-                
-            </SlideContainer>
+            </Container>
         )
     }
 }

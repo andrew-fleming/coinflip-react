@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import './App.css'
 import Navbar from './components/Navbar'
 import CoinflipHeader from './components/CoinflipHeader'
-import BetSlider from './components/BetSlider'
+import BetForm from './components/BetForm'
 import HeadsOrTails from './components/HeadsOrTails'
 import PlayerWinnings from './components/PlayerWinnings'
 
@@ -18,7 +18,7 @@ padding: 3.5rem;
   color: #a9a9a9;
   text-align: center;
   text-shadow: 1px 1px pink;
-  font-size: 2rem;
+  font-size: 2.3rem;
 `;
 
 const TriangleBefore = styled.div`
@@ -49,12 +49,18 @@ const BetCol = styled.div`
   flex-direction: column; 
 `;
 
-const Text = styled.div`
-  font-size: 2rem;
-  margin-top: 1rem;
+const Input = styled.input`
+  height: 2rem;
+  width: 12rem;
+  font-size: 1.5rem;
 `;
 
-const accountBalanceText = 'Available ETH to win: ';
+const BottomDiv = styled.div`
+  background: #f5f5f5;
+  height: 47.6vh;
+`;
+
+const accountBalanceText = 'Available ETH to Win: ';
 
 export default class App extends Component {
 
@@ -115,7 +121,7 @@ export default class App extends Component {
       account: '0x0',
       contractBalance: '0',
       winningsBalance: '0',
-      betAmount: '.5',
+      betAmount: '.01',
       loading: true,
     }
 
@@ -124,6 +130,7 @@ export default class App extends Component {
     this.inputHeads = this.inputHeads.bind(this)
     this.inputTails = this.inputTails.bind(this)
     this.handleChange = this.handleChange.bind(this)
+    this.handleRefresh = this.handleRefresh.bind(this)
   }
 
   flipTheCoin(guess){
@@ -136,7 +143,8 @@ export default class App extends Component {
     }
     this.state.coinflip.methods.flip(guess).send(config)
       .once('receipt', (receipt) => {
-      this.setState({ loading: false })
+        this.handleRefresh()
+        this.setState({ loading: false })
     })
   }
 
@@ -156,12 +164,17 @@ export default class App extends Component {
     this.setState({ betAmount: event.target.value })
   }
 
+  handleRefresh(){
+    this.componentDidMount()
+  }
+
   userWithdrawal(){
     this.setState({ loading: true })
     var balance = this.state.winningsBalance
     this.state.coinflip.methods.withdrawWinnings().send(balance, { from: this.state.account })
     .once('receipt', (receipt) => {
       this.setState({ loading: false })
+      this.componentDidMount()
     })
   }
 
@@ -176,15 +189,16 @@ export default class App extends Component {
         <Triangle> {accountBalanceText} {this.state.contractBalance}
           <TriangleBefore/>
         </Triangle>
+        <BottomDiv>
         <Div>
           <BetCol>
-          < BetSlider 
+          < BetForm 
             />
-            <input type="text" placeholder="0-10"
+            <Input type="text" placeholder="0-10 ETH"
             value = {this.state.value} onChange={this.handleChange}
             >
-            </input>
-            <Text>Ether</Text>
+            </Input>
+            
             </BetCol>
           < PlayerWinnings 
             winningsBalance={this.state.winningsBalance}
@@ -198,6 +212,7 @@ export default class App extends Component {
             inputTails={this.inputTails}
             />
         </CoinDiv>
+        </BottomDiv>
       </div>
     }
 
