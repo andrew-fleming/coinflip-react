@@ -123,6 +123,7 @@ export default class App extends Component {
     this.userWithdrawal = this.userWithdrawal.bind(this)
     this.inputHeads = this.inputHeads.bind(this)
     this.inputTails = this.inputTails.bind(this)
+    this.handleChange = this.handleChange.bind(this)
   }
 
   flipTheCoin(guess){
@@ -141,7 +142,7 @@ export default class App extends Component {
 
   inputHeads(){
     let guess = 0
-    
+
     this.flipTheCoin(guess)
   }
 
@@ -149,6 +150,10 @@ export default class App extends Component {
     let guess = 1
 
     this.flipTheCoin(guess)
+  }
+
+  handleChange(event){
+    this.setState({ betAmount: event.target.value })
   }
 
   userWithdrawal(){
@@ -176,7 +181,7 @@ export default class App extends Component {
           < BetSlider 
             />
             <input type="text" placeholder="0-10"
-            ref={(value) => {this.value = value}}
+            value = {this.state.value} onChange={this.handleChange}
             >
             </input>
             <Text>Ether</Text>
