@@ -6,6 +6,7 @@ contract Coinflip{
     
     event userWithdrawal(address indexed _from, uint _value);
     event ownerWithdrawAll(address indexed _from, uint _value);
+    event userWin(address indexed _from, uint _value);
 
     constructor() public payable onlyOwner{
         owner = msg.sender;
@@ -31,6 +32,7 @@ contract Coinflip{
         if(headsTails == randOutcome){
             contractBalance -= msg.value;
             playerWinnings[msg.sender] += winAmount;
+            emit userWin(msg.sender, winAmount);
         } else {
             contractBalance += msg.value;
         }

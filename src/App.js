@@ -60,6 +60,38 @@ const BottomDiv = styled.div`
   height: 47.6vh;
 `;
 
+const OwnerContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  color: red;
+`;
+
+const OwnerSubContainer = styled.div`
+  align-items: center;
+  margin-left: 2rem;
+`;
+
+const OwnerSubContainer2 = styled.div`
+  align-items: center;
+`;
+
+const OwnerInput = styled.input`
+  width: 6rem;
+  margin: .2rem;
+`;
+
+const OwnerInputButton = styled.button`
+  background-color: red
+`;
+
+const OwnerButton = styled.button`
+  font-weight: bolder;
+  width: 8rem;
+  height: 3rem;
+  margin-right: 2rem;
+  background-color: red;
+`;
+
 const accountBalanceText = 'Available ETH to Win: ';
 
 export default class App extends Component {
@@ -74,7 +106,6 @@ export default class App extends Component {
 
     const accounts = await web3.eth.getAccounts()
     this.setState({ account: accounts[0] })
-    console.log(accounts)
 
     const networkId = await web3.eth.net.getId()
 
@@ -96,6 +127,12 @@ export default class App extends Component {
       //load userWinnings balance
       let winningsBalance = await coinflip.methods.winningsBalance().call()
       this.setState({ winningsBalance: tokens(winningsBalance.toString()) })
+
+      //setting owner in state
+      let owner = await coinflip.methods.owner().call()
+        this.setState({ owner: owner })
+
+
     } else {
       window.alert('Coinflip contract not deployed to detected network.')
     }
@@ -118,6 +155,7 @@ export default class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      owner: '0x0',
       account: '0x0',
       contractBalance: '0',
       winningsBalance: '0',
@@ -129,8 +167,11 @@ export default class App extends Component {
     this.userWithdrawal = this.userWithdrawal.bind(this)
     this.inputHeads = this.inputHeads.bind(this)
     this.inputTails = this.inputTails.bind(this)
-    this.handleChange = this.handleChange.bind(this)
+    this.handleBet = this.handleBet.bind(this)
     this.handleRefresh = this.handleRefresh.bind(this)
+    this.fundWinnings = this.fundWinnings.bind(this)
+    this.fundContract = this.fundContract.bind(this)
+    this.withdrawAll = this.withdrawAll.bind(this)
   }
 
   flipTheCoin(guess){
@@ -145,6 +186,7 @@ export default class App extends Component {
       .once('receipt', (receipt) => {
         this.handleRefresh()
         this.setState({ loading: false })
+        this.flipResultPopup()
     })
   }
 
@@ -156,11 +198,12 @@ export default class App extends Component {
 
   inputTails(){
     let guess = 1
-
+   
     this.flipTheCoin(guess)
   }
+  
 
-  handleChange(event){
+  handleBet(event){
     this.setState({ betAmount: event.target.value })
   }
 
@@ -178,8 +221,64 @@ export default class App extends Component {
     })
   }
 
+  fundWinnings(value){
+    this.state.coinflip.methods.fundWinnings().send(value, { from: this.state.account })
+    .once('receipt', (receipt) => {
+      this.handleRefresh()
+    })
+  }
+
+  fundContract(value){
+    this.state.coinflip.methods.addFunds().send(value, { from: this.state.account })
+    .once('receipt', (receipt) => {
+      this.handleRefresh()
+    })
+  }
+
+  withdrawAll(){
+    let balance = this.state.contractBalance
+    this.state.coinflip.methods.withdrawAll().send(balance, { from: this.state.account})
+    .once('receipt', (receipt) => {
+      this.handleRefresh()
+    })
+  }
+
+
+
   render() {
+    //owner content
+    let ownerScreen;
+    let fundBal = 'Fund Balance '
+    let fundWin = 'Fund Winnings '
+
+    if(this.state.owner === this.state.account){
+      ownerScreen = 
+      <OwnerContainer>
+        < OwnerSubContainer>
+          <div>
+          {fundBal}<OwnerInput type='text' placeholder='Owner' 
+          />
+          <OwnerInputButton >Fund</OwnerInputButton>
+          </div>
+
+          <div>
+          {fundWin}<OwnerInput type='text' placeholder='Owner' 
+            value = {this.state.value}
+          />
+          <OwnerInputButton >Fund</OwnerInputButton>
+          </div>
+        </OwnerSubContainer>
+
+        <OwnerSubContainer2>
+        <OwnerButton onClick={this.withdrawAll}>Owner Withdraw</OwnerButton>
+        </OwnerSubContainer2>
+
+      </OwnerContainer>
+    }
+
+    //regular user content
     let content;
+
     if(this.state.loading){
       content = <p id="loader" className="text-center">Loading...</p>
     } else {
@@ -195,7 +294,7 @@ export default class App extends Component {
           < BetForm 
             />
             <Input type="text" placeholder="0-10 ETH"
-            value = {this.state.value} onChange={this.handleChange}
+            value = {this.state.value} onChange={this.handleBet}
             >
             </Input>
             
@@ -212,6 +311,7 @@ export default class App extends Component {
             inputTails={this.inputTails}
             />
         </CoinDiv>
+        {ownerScreen}
         </BottomDiv>
       </div>
     }
