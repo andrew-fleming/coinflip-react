@@ -18,6 +18,7 @@ const HeadsButton = styled.button`
     width: 7rem;
     height: 7rem;
     box-shadow: 2px 2px black;
+    cursor: pointer;
 `;
 
 const TailsButton = styled.button`
@@ -32,6 +33,7 @@ const TailsButton = styled.button`
     width: 7rem;
     height: 7rem;
     box-shadow: 2px 2px black;
+    cursor: pointer;
 `;
 
 export default class HeadsOrTails extends Component {

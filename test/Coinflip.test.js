@@ -82,7 +82,4 @@ contract('Coinflip', (accounts) => {
         })
     })
 
-
-
-
 })

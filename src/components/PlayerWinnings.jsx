@@ -22,6 +22,7 @@ const Button = styled.button`
     background-color: green;
     height: 3rem;
     width: 9rem;
+    cursor: pointer;
 `;
 
 export default class PlayerWinnings extends Component {

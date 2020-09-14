@@ -5,7 +5,6 @@ const Nav = styled.nav`
     background-color: black;
     color: pink;
     text-shadow: .5px .5px #cccccc;
-
     height: 1.5rem;
     padding: .7rem 2.5rem .7rem 0;
 `;

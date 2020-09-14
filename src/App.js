@@ -106,6 +106,7 @@ export default class App extends Component {
 
     const accounts = await web3.eth.getAccounts()
     this.setState({ account: accounts[0] })
+    console.log(this.state.account)
 
     const networkId = await web3.eth.net.getId()
 
@@ -160,6 +161,8 @@ export default class App extends Component {
       contractBalance: '0',
       winningsBalance: '0',
       betAmount: '.01',
+      fundWin: '',
+      fundContractBalance: '',
       loading: true,
     }
 
@@ -172,6 +175,8 @@ export default class App extends Component {
     this.fundWinnings = this.fundWinnings.bind(this)
     this.fundContract = this.fundContract.bind(this)
     this.withdrawAll = this.withdrawAll.bind(this)
+    this.handleWinFunds = this.handleWinFunds.bind(this)
+    this.handleContractFunds = this.handleContractFunds.bind(this)
   }
 
   flipTheCoin(guess){
@@ -207,8 +212,16 @@ export default class App extends Component {
     this.setState({ betAmount: event.target.value })
   }
 
+  handleWinFunds(event){
+    this.setState({ fundWin: event.target.value })
+  }
+
+  handleContractFunds(event){
+    this.setState({ fundContractBalance: event.target.value })
+  }
+
   handleRefresh(){
-    this.componentDidMount()
+    this.componentDidMount() 
   }
 
   userWithdrawal(){
@@ -221,15 +234,27 @@ export default class App extends Component {
     })
   }
 
-  fundWinnings(value){
-    this.state.coinflip.methods.fundWinnings().send(value, { from: this.state.account })
+  fundWinnings(){
+    var web3 = new Web3(Web3.givenProvider)
+    let winnings = this.state.fundWin
+    let config = {
+      value: web3.utils.toWei(winnings, 'ether'),
+      from: this.state.account
+    }
+    this.state.coinflip.methods.fundWinnings().send(config)
     .once('receipt', (receipt) => {
       this.handleRefresh()
     })
   }
 
-  fundContract(value){
-    this.state.coinflip.methods.addFunds().send(value, { from: this.state.account })
+  fundContract(){
+    var web3 = new Web3(Web3.givenProvider)
+    let conFunds = this.state.fundContractBalance
+    let config = {
+      value: web3.utils.toWei(conFunds, 'ether'),
+      from: this.state.account
+    }
+    this.state.coinflip.methods.addFunds().send(config)
     .once('receipt', (receipt) => {
       this.handleRefresh()
     })
@@ -244,9 +269,10 @@ export default class App extends Component {
   }
 
 
-
   render() {
     //owner content
+
+    //owner functions
     let ownerScreen;
     let fundBal = 'Fund Balance '
     let fundWin = 'Fund Winnings '
@@ -257,15 +283,20 @@ export default class App extends Component {
         < OwnerSubContainer>
           <div>
           {fundBal}<OwnerInput type='text' placeholder='Owner' 
+          value={this.state.fundContractBalance} onChange={this.handleContractFunds}
           />
-          <OwnerInputButton >Fund</OwnerInputButton>
+          <OwnerInputButton 
+            onClick={this.fundContract}
+          >Fund</OwnerInputButton>
           </div>
 
           <div>
           {fundWin}<OwnerInput type='text' placeholder='Owner' 
-            value = {this.state.value}
+            value={this.state.fundWin} onChange={this.handleWinFunds}
           />
-          <OwnerInputButton >Fund</OwnerInputButton>
+          <OwnerInputButton 
+            onClick={this.fundWinnings}
+          >Fund</OwnerInputButton>
           </div>
         </OwnerSubContainer>
 
@@ -318,7 +349,9 @@ export default class App extends Component {
 
     return (
         <div>
-          <Navbar account={this.state.account} />
+          <Navbar account={this.state.account} 
+          owner={this.state.owner}
+          />
           <>
             { content }
           </>
