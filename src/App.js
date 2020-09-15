@@ -106,7 +106,6 @@ export default class App extends Component {
 
     const accounts = await web3.eth.getAccounts()
     this.setState({ account: accounts[0] })
-    console.log(this.state.account)
 
     const networkId = await web3.eth.net.getId()
 
@@ -126,7 +125,7 @@ export default class App extends Component {
       this.setState({ contractBalance: tokens(contractBalance.toString()) })
       
       //load userWinnings balance
-      let winningsBalance = await coinflip.methods.winningsBalance().call()
+      let winningsBalance = await coinflip.methods.playerWinnings(this.state.account).call()
       this.setState({ winningsBalance: tokens(winningsBalance.toString()) })
 
       //setting owner in state
