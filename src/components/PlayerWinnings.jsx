@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 const Container = styled.div`
@@ -25,10 +25,7 @@ const Button = styled.button`
     cursor: pointer;
 `;
 
-export default class PlayerWinnings extends Component {
-
-
-    render() {
+export default function PlayerWinnings(props) {
 
         const winningsMessage = "Your ETH Winnings: "
         const withdrawMessage = "Withdraw All!"
@@ -37,10 +34,9 @@ export default class PlayerWinnings extends Component {
             <Container>
                 <Div>
                 {winningsMessage}
-                 <div>{this.props.winningsBalance}</div>
-                <Button onClick={this.props.userWithdrawal} >{withdrawMessage}</Button>
+                 <div>{props.winningsBalance}</div>
+                <Button onClick={props.userWithdrawal} >{withdrawMessage}</Button>
                 </Div>
             </Container>
         )
-    }
 }

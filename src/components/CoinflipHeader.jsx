@@ -31,7 +31,7 @@ export default class CoinflipHeader extends Component {
         return (
             <Header>
                 <Img src={logo} alt='ethereum logo' />
-                <H1>Coinflip Dapp</H1>
+                <H1>Coinflip dApp</H1>
             </Header>
         )
     }
