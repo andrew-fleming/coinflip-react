@@ -157,7 +157,7 @@ export default class App extends Component {
     this.state = {
       owner: '0x0',
       account: '0x0',
-      contractBalance: '0',
+      contractBalance: '',
       winningsBalance: '0',
       betAmount: '.01',
       fundWin: '',
@@ -177,6 +177,8 @@ export default class App extends Component {
     this.handleWinFunds = this.handleWinFunds.bind(this)
     this.handleContractFunds = this.handleContractFunds.bind(this)
   }
+
+
 
   flipTheCoin(guess){
     this.setState({ loading: true })

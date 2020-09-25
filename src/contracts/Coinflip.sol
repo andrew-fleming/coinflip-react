@@ -1,6 +1,10 @@
-pragma solidity ^0.5.0;
+pragma solidity =0.5.16;
 
-contract Coinflip{
+import "./SafeMath.sol";
+
+contract Coinflip {
+
+    using SafeMath for uint;
     
     mapping(address => uint) public playerWinnings;
     
@@ -26,15 +30,15 @@ contract Coinflip{
         require(headsTails == 0 || headsTails == 1, "Please choose heads or tails");
         require(msg.value >= .001 ether && msg.value <= 10 ether, "Please bet within the set parameters");
         require(msg.value < contractBalance, "Sorry, we don't have enough funds to cover that!");
-        uint winAmount = msg.value * 2;
+        uint winAmount = SafeMath.mul(msg.value, 2);
         uint randOutcome = random();
         random();
         if(headsTails == randOutcome){
-            contractBalance -= msg.value;
-            playerWinnings[msg.sender] += winAmount;
+            contractBalance = SafeMath.sub(contractBalance, msg.value);
+            playerWinnings[msg.sender] = SafeMath.add(playerWinnings[msg.sender], winAmount);
             emit userWin(msg.sender, winAmount);
         } else {
-            contractBalance += msg.value;
+            contractBalance = SafeMath.add(contractBalance, msg.value);
         }
     }
     
@@ -67,13 +71,13 @@ contract Coinflip{
     
     //fund contract post-deployment
     function addFunds() public payable onlyOwner {
-        contractBalance += msg.value;
+        contractBalance = SafeMath.add(contractBalance, msg.value);
     }
     
     //fund user winnings balance 
     //TESTING ONLY
     function fundWinnings() public payable {
-        playerWinnings[msg.sender] += msg.value;
+        playerWinnings[msg.sender] = SafeMath.add(playerWinnings[msg.sender], msg.value);
     }
 
 }
