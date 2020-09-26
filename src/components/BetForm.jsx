@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 const Container = styled.div`
@@ -17,11 +17,7 @@ const SpanText = styled.span`
 `;
 
 
-export default class BetForm extends Component {
-    
-
-    render() {
-
+export default function BetForm(props) {
         const betText = "Place Your Bet"
 
         return (
@@ -31,4 +27,3 @@ export default class BetForm extends Component {
             </Container>
         )
     }
-}

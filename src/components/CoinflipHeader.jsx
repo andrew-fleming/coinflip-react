@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import logo from '../logo.png'
 import styled from 'styled-components'
 
@@ -26,8 +26,7 @@ const Img = styled.img`
 `;
 
 
-export default class CoinflipHeader extends Component {
-    render() {
+export default function CoinflipHeader(props) {
         return (
             <Header>
                 <Img src={logo} alt='ethereum logo' />
@@ -35,4 +34,3 @@ export default class CoinflipHeader extends Component {
             </Header>
         )
     }
-}

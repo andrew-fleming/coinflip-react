@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 const Container = styled.div`
@@ -36,26 +36,24 @@ const TailsButton = styled.button`
     cursor: pointer;
 `;
 
-export default class HeadsOrTails extends Component {
+export default function HeadsOrTails(props) {
 
-    render() {
 
         return (
             <Container>
                 <HeadsButton onClick={(event) => {
                     event.preventDefault()
                     
-                    this.props.inputHeads()
+                    props.inputHeads()
                 }}>Heads</HeadsButton>
 
                 <TailsButton
                     onClick={(event) => {
                         event.preventDefault()
 
-                        this.props.inputTails()
+                        props.inputTails()
                     }}
                 >Tails</TailsButton>
             </Container>
         )
     }
-}

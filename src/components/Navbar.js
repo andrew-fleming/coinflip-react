@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 const Nav = styled.nav`
@@ -13,17 +13,12 @@ const Account = styled.div`
     text-align: right;    
 `;
 
-class Navbar extends Component {
-
-  render() {
+export default function Navbar(props) {
     return (
         <Nav>
             <Account>
-            <small>Account: {this.props.account}</small>
+            <small>Account: {props.account}</small>
             </Account>
         </Nav>
     );
   }
-}
-
-export default Navbar;

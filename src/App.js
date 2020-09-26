@@ -192,7 +192,6 @@ export default class App extends Component {
       .once('receipt', (receipt) => {
         this.handleRefresh()
         this.setState({ loading: false })
-        this.flipResultPopup()
     })
   }
 
